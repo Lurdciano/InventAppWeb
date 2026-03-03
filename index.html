@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>InventApp</title>
+  <meta name="description"
+    content="InventApp — Sistema integral de gestión de ventas, inventario y cuentas corrientes diseñado para tiendas de ropa." />
+  <link rel="icon" href="../LogoTienda.png" type="image/png">
+  <link rel="shortcut icon" href="../LogoTienda.png" type="image/png">
+  <style>
+    /* ====== Variables de tema ====== */
+    :root {
+      --bg: #0a0f1a;
+      /* Azul oscuro profundo */
+      --panel: #1a2332;
+      /* Azul grisáceo */
+      --muted: #94a3b8;
+      --accent-blue: #3b82f6;
+      /* Azul principal */
+      --accent-success: #22c55e;
+      /* Verde para ventas/efectivo */
+      --accent-warning: #f59e0b;
+      /* Naranja para advertencias */
+      --accent-danger: #ef4444;
+      /* Rojo para deudas/fiado */
+      --accent-purple: #8b5cf6;
+      /* Púrpura para transferencias */
+      --glass: rgba(255, 255, 255, 0.05);
+      --radius: 16px;
+      --glass-2: rgba(255, 255, 255, 0.02);
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+      --surface-border: rgba(255, 255, 255, 0.1);
+      --max-width: 1100px;
+      --gap: 24px;
+      --header-height: 110px;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html {
+      height: auto;
+      scroll-padding-top: var(--header-height);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #0a0f1a 0%, #1a2332 50%, #0a0f1a 100%);
+      color: #f8fafc;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.45;
+      padding: 0 16px 24px;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+      padding-top: 24px;
+    }
+
+    header.topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(26, 35, 50, 0.9);
+      backdrop-filter: blur(16px);
+      padding: 14px 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--surface-border);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .brand {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 78px;
+      height: 78px;
+      border-radius: 12px;
+      flex-shrink: 0;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 2px solid rgba(59, 130, 246, 0.25);
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .brand h1 {
+      font-size: 22px;
+      margin: 0;
+      letter-spacing: 0.2px;
+      color: var(--accent-blue);
+    }
+
+    .brand p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    nav.nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    nav.nav a {
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: transparent;
+      border: 1px solid transparent;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    nav.nav a:hover {
+      color: #fff;
+      border-color: var(--surface-border);
+      background: var(--glass)
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      border: 0;
+      cursor: pointer;
+      background: var(--accent-blue);
+      color: white;
+      box-shadow: 0 6px 18px rgba(59, 130, 246, 0.15);
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.25);
+    }
+
+    .btn.outline {
+      background: transparent;
+      color: var(--accent-blue);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+    }
+
+    section {
+      background: linear-gradient(180deg, rgba(59, 130, 246, 0.03), transparent);
+      border-radius: var(--radius);
+      padding: 22px;
+      border: 1px solid var(--surface-border);
+      box-shadow: var(--shadow);
+      scroll-margin-top: var(--header-height);
+    }
+
+    .hero {
+      background: linear-gradient(180deg, rgba(59, 130, 246, 0.05), transparent);
+      border-radius: var(--radius);
+      padding: 36px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--surface-border);
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-left {
+      flex: 1;
+      min-width: 260px
+    }
+
+    .hero h2 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      color: var(--accent-blue)
+    }
+
+    .hero h3 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.12;
+      color: #fff
+    }
+
+    .hero p {
+      color: var(--muted);
+      margin-top: 16px;
+      font-size: 18px;
+    }
+
+    .hero-visual {
+      width: 420px;
+      max-width: 48%;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--surface-border);
+      background: linear-gradient(180deg, #1a2332, #0f172a);
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .mini-dashboard {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px
+    }
+
+    .card {
+      background: var(--panel);
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--glass-2)
+    }
+
+    .stat {
+      font-size: 14px;
+      color: var(--muted)
+    }
+
+    .value {
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--accent-blue);
+      margin-top: 6px
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap
+    }
+
+    .section-header h3 {
+      margin: 0;
+      color: var(--accent-blue);
+      font-size: 22px;
+    }
+
+    .module {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
+      align-items: start;
+      margin-top: 14px;
+    }
+
+    .module .desc {
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 16px
+    }
+
+    .feature {
+      background: var(--glass);
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px dashed rgba(59, 130, 246, 0.1);
+      font-size: 14px;
+      color: var(--muted)
+    }
+
+    .feature strong {
+      color: var(--accent-blue);
+    }
+
+    .media-placeholder {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 10;
+      border-radius: 10px;
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.05), transparent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      border: 1px solid var(--surface-border);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .media-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .media-placeholder img:hover {
+      transform: scale(1.05);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 700;
+      font-size: 13px
+    }
+
+    .b-ef {
+      background: linear-gradient(90deg, var(--accent-success), #4ade80)
+    }
+
+    .b-trans {
+      background: linear-gradient(90deg, var(--accent-purple), #a78bfa)
+    }
+
+    .b-fi {
+      background: linear-gradient(90deg, var(--accent-danger), #f87171)
+    }
+
+    .b-gain {
+      background: linear-gradient(90deg, var(--accent-warning), #fbbf24)
+    }
+
+    .b-total {
+      background: linear-gradient(90deg, var(--accent-blue), #60a5fa)
+    }
+
+    /* Lightbox */
+    #image-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 15, 26, 0.98);
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 20px;
+      box-sizing: border-box;
+      cursor: zoom-out
+    }
+
+    .modal-content {
+      position: relative;
+      max-width: 96%;
+      max-height: 96vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #modal-media img,
+    #modal-media video {
+      max-width: 100%;
+      max-height: 92vh;
+      border-radius: 14px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+      border: 2px solid var(--accent-blue)
+    }
+
+    .modal-close {
+      position: absolute;
+      top: -52px;
+      right: 8px;
+      color: #fff;
+      font-size: 46px;
+      font-weight: 300;
+      cursor: pointer;
+      line-height: 1
+    }
+
+    .accordion {
+      margin-top: 12px;
+      border-radius: 10px;
+      overflow: hidden
+    }
+
+    .acc-item {
+      border-top: 1px solid var(--surface-border)
+    }
+
+    .acc-head {
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer
+    }
+
+    .acc-body {
+      padding: 12px;
+      background: transparent;
+      color: var(--muted);
+      display: none
+    }
+
+    .acc-head h4 {
+      margin: 0;
+      font-size: 15px
+    }
+
+    .acc-open .acc-body {
+      display: block
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      color: var(--muted)
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      text-align: left
+    }
+
+    th {
+      color: var(--accent-blue);
+      font-weight: 700
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      padding-top: 24px;
+      border-top: 1px solid var(--surface-border);
+    }
+
+    .social a {
+      margin-left: 10px;
+      opacity: 0.9
+    }
+
+    .mt {
+      margin-top: 12px
+    }
+
+    .kbd {
+      background: #1a2332;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(59, 130, 246, 0.1);
+      font-weight: 700;
+      color: var(--accent-blue);
+    }
+
+    @media (max-width:920px) {
+      :root {
+        --header-height: auto;
+      }
+
+      header.topbar {
+        position: sticky;
+        top: 0;
+        flex-direction: column;
+        padding: 10px 12px;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border-radius: 0 0 16px 16px;
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 80px;
+        max-height: 18vh;
+      }
+
+      .brand {
+        flex-direction: column;
+        gap: 4px;
+        align-items: center;
+        text-align: center;
+      }
+
+      .logo {
+        width: 42px;
+        height: 42px;
+        border-width: 1.5px;
+      }
+
+      .brand h1 {
+        font-size: 16px;
+        line-height: 1;
+      }
+
+      .brand p {
+        display: none;
+      }
+
+      nav.nav {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 4px;
+        width: 100%;
+      }
+
+      nav.nav a {
+        padding: 5px 8px;
+        font-size: 11px;
+        background: var(--glass);
+        border: 1px solid var(--surface-border);
+        border-radius: 8px;
+      }
+
+      nav.nav a[href="#pro"] {
+        display: none;
+        /* Eliminar Requisitos del header en móvil */
+      }
+
+      .module {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .hero {
+        padding: 24px;
+        text-align: center;
+      }
+
+      .hero-visual {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      body {
+        padding: 0 10px 20px;
+      }
+    }
+
+    @media (max-width:640px) {
+      .hero h2 {
+        font-size: 20px;
+      }
+
+      .hero h3 {
+        font-size: 28px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .mini-dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .media-placeholder {
+        height: auto !important;
+        min-height: 200px;
+      }
+
+      .media-placeholder img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    .video-demo {
+      text-align: center;
+    }
+
+    .video-wrapper {
+      position: relative;
+      max-width: 920px;
+      margin: 24px auto 0;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+      cursor: pointer;
+      border: 2px solid var(--surface-border);
+      aspect-ratio: 16 / 9;
+    }
+
+    .video-wrapper img {
+      width: 100%;
+      display: block;
+    }
+
+    .play-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90px;
+      height: 90px;
+      background: rgba(59, 130, 246, 0.95);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+      transition: all 0.3s ease;
+      z-index: 2;
+    }
+
+    @media (max-width: 640px) {
+      .play-overlay {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+      }
+    }
+
+    .video-wrapper:hover .play-overlay {
+      transform: translate(-50%, -50%) scale(1.1);
+      background: var(--accent-blue);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <header class="topbar" role="banner">
+      <div class="brand">
+        <div class="logo">
+          <img src="../LogoTienda.png" alt="InventApp Logo">
+        </div>
+        <div>
+          <h1>InventApp</h1>
+          <p class="muted">Gestión de Tiendas · Ventas · Inventario</p>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="#hero" data-scroll>Inicio</a>
+        <a href="#video-demo" data-scroll>Demo</a>
+        <a href="#caja" data-scroll>Funciones</a>
+        <a href="#pro" data-scroll>Requisitos</a>
+        <a href="#contact" data-scroll>Contacto</a>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <section id="hero" class="hero">
+      <div class="hero-left">
+        <h2>Software de Gestión para tu Tienda</h2>
+        <h3>Especializado en Ropa y Accesorios</h3>
+        <p>Sistema web offline completo con control de ventas, inventario, presupuestos, facturación y respaldos automáticos. Funciona sin conexión a internet.</p>
+      </div>
+
+      <div class="hero-visual">
+        <div class="mini-dashboard">
+          <div class="card">
+            <div class="stat">Ventas del día</div>
+            <div class="value">$54000.00</div>
+          </div>
+          <div class="card">
+            <div class="stat">Productos</div>
+            <div class="value">125</div>
+          </div>
+          <div class="card">
+            <div class="stat">Deudas CC</div>
+            <div class="value">$3500.00</div>
+          </div>
+          <div class="card">
+            <div class="stat">Base de Datos</div>
+            <div class="value">SQLite</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIDEO DEMO -->
+    <section id="video-demo" class="video-demo">
+      <div class="section-header">
+        <h3>Video Demostración</h3>
+      </div>
+      <p class="desc">Visualización de funcionamiento del sistema.</p>
+
+      <div class="video-wrapper" id="video-trigger">
+        <div class="media-placeholder" style="aspect-ratio: 16/9; border: none;">
+          <img src="images/Demo.png" alt="Demo" class="no-lightbox">
+        </div>
+        <div class="play-overlay">▶</div>
+      </div>
+    </section>
+
+    <!-- MÓDULO CAJA (POS) -->
+    <section id="caja">
+      <div class="section-header">
+        <h3>Módulo de Caja (POS)</h3>
+        <div>
+          <span class="badge b-ef">Efectivo</span>
+          <span class="badge b-trans">Transferencia</span>
+          <span class="badge b-fi">Fiado</span>
+        </div>
+      </div>
+
+      <div class="module">
+        <div>
+          <p class="desc">Interfaz optimizada para el punto de venta con confirmación de seguridad y múltiples métodos de pago.</p>
+          <div class="features">
+            <div class="feature"><strong>Venta Ágil</strong><br>Buscador inteligente por código o nombre de producto.</div>
+            <div class="feature"><strong>Múltiples Pagos</strong><br>Soporta efectivo, transferencias y cuentas corrientes.</div>
+            <div class="feature"><strong>Seguridad de Venta</strong><br>Diálogos de confirmación para evitar errores accidentales.</div>
+            <div class="feature"><strong>Ticketería</strong><br>Generación de tickets y reportes instantáneos.</div>
+          </div>
+          <div class="accordion mt">
+            <div class="acc-item">
+              <div class="acc-head" data-acc>
+                <h4>Configuración de Precios y Descuentos</h4>
+                <div class="muted">ver más</div>
+              </div>
+              <div class="acc-body">
+                <p class="muted">El sistema permite configurar precios por mayor/menor, aplicar descuentos automáticos y gestionar promociones especiales.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="media-placeholder">
+            <img src="images/Caja.png" alt="Módulo de Caja">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INVENTARIO -->
+    <section id="inventario">
+      <div class="section-header">
+        <h3>Gestión de Inventario</h3>
+      </div>
+      <div class="module">
+        <div>
+          <p class="desc">Control completo de stock con categorización inteligente y alertas automáticas.</p>
+          <div class="features">
+            <div class="feature"><strong>Control de Stock</strong><br>Validación automática de existencias antes de ventas.</div>
+            <div class="feature"><strong>Categorización</strong><br>Organiza productos por categorías generales.</div>
+            <div class="feature"><strong>Alertas de Bajo Stock</strong><br>Notificaciones automáticas cuando necesites reponer.</div>
+            <div class="feature"><strong>Historial de Movimientos</strong><br>Registro completo de entradas y salidas.</div>
+          </div>
+        </div>
+        <div>
+          <div class="media-placeholder">
+            <img src="images/Inventario.png" alt="Gestión de Inventario">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRESUPUESTO -->
+    <section id="presupuesto">
+      <div class="section-header">
+        <h3>Generador de Presupuestos</h3>
+        <div>
+          <span class="badge b-gain">PDF</span>
+          <span class="badge b-total">Personalizable</span>
+        </div>
+      </div>
+      <div class="module">
+        <div>
+          <p class="desc">Crea presupuestos profesionales para tus clientes sin afectar el inventario ni registrar ventas.</p>
+          <div class="features">
+            <div class="feature"><strong>Presupuestos Rápidos</strong><br>Genera cotizaciones en segundos con productos del catálogo.</div>
+            <div class="feature"><strong>PDF Profesional</strong><br>Exporta presupuestos en formato PDF listo para enviar.</div>
+            <div class="feature"><strong>Validez Configurable</strong><br>Establece períodos de validez personalizados.</div>
+            <div class="feature"><strong>Notas Adicionales</strong><br>Agrega términos, condiciones u observaciones.</div>
+          </div>
+          <div class="accordion mt">
+            <div class="acc-item">
+              <div class="acc-head" data-acc>
+                <h4>Flujo de Trabajo</h4>
+                <div class="muted">ver más</div>
+              </div>
+              <div class="acc-body">
+                <p class="muted">El sistema permite seleccionar productos, calcular totales automáticamente, agregar descuentos y generar un PDF profesional que puedes enviar por WhatsApp o email a tus clientes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="media-placeholder">
+            <img src="images/Presupuesto.png" alt="Generador de Presupuestos">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OBJETIVO MENSUAL -->
+    <section id="objetivo">
+      <div class="section-header">
+        <h3>Objetivo Mensual</h3>
+        <div>
+          <span class="badge b-gain">Metas</span>
+          <span class="badge b-total">Progreso</span>
+        </div>
+      </div>
+      <div class="module">
+        <div>
+          <p class="desc">Establece y sigue el progreso de tus metas de ventas para mantener tu negocio enfocado.</p>
+          <div class="features">
+            <div class="feature"><strong>Metas Configurables</strong><br>Define objetivos mensuales según tus necesidades.</div>
+            <div class="feature"><strong>Seguimiento en Tiempo Real</strong><br>Visualiza el progreso actualizado automáticamente.</div>
+            <div class="feature"><strong>Ingresos Manuales</strong><br>Agrega ventas externas al objetivo del mes.</div>
+            <div class="feature"><strong>Estadísticas Visuales</strong><br>Barras de progreso y porcentajes claros.</div>
+          </div>
+          <div class="accordion mt">
+            <div class="acc-item">
+              <div class="acc-head" data-acc>
+                <h4>Control de Metas</h4>
+                <div class="muted">ver más</div>
+              </div>
+              <div class="acc-body">
+                <p class="muted">El sistema te permite establecer metas mensuales, seguimiento automático de ventas, agregar ingresos manuales y visualizar el progreso con indicadores claros que te ayudarán a tomar decisiones informadas.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="media-placeholder">
+            <img src="images/Objetivo.png" alt="Objetivo Mensual">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REQUISITOS -->
+    <section>
+      <div id="pro" class="section-header">
+        <h3>Requisitos Técnicos Recomendados</h3>
+      </div>
+      <ul class="muted mt" style="columns: 2;">
+        <li>Windows 7, 10, 11 (x64)</li>
+        <li>4 GB de Memoria RAM</li>
+        <li>Espacio en disco: 500 MB</li>
+        <li>Navegador web actualizado</li>
+      </ul>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contact">
+      <div class="section-header">
+        <h3>Contacto y Soporte</h3>
+      </div>
+      <p class="muted">¿Interesado en el sistema o necesita soporte técnico? - Contactanos para más información.</p>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:16px">
+        <a class="btn">lurdciano@gmail.com</a>
+        <a class="btn outline" href="https://terracode.site/" target="_blank">Web de TerraCode</a>
+      </div>
+      <footer class="mt">
+        <div>© <strong>TerraCode</strong> <span class="muted">- 2026</span></div>
+        <div class="social muted">Solución de gestión inteligente para tiendas</div>
+      </footer>
+    </section>
+
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div id="image-modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <div id="modal-media"></div>
+    </div>
+  </div>
+
+  <script>
+    // Smooth scroll
+    document.querySelectorAll('[data-scroll]').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const href = this.getAttribute('href');
+        const target = document.querySelector(href);
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // Accordions
+    document.querySelectorAll('[data-acc]').forEach(function (head) {
+      head.addEventListener('click', function () {
+        const item = this.closest('.acc-item');
+        item.classList.toggle('acc-open');
+      });
+    });
+
+    // Lightbox for images/video
+    (function initLightbox() {
+      const modal = document.getElementById('image-modal');
+      const modalMedia = document.getElementById('modal-media');
+      const closeBtn = document.querySelector('.modal-close');
+
+      function openModal(content) {
+        modalMedia.innerHTML = content;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'visible';
+        modalMedia.innerHTML = '';
+      }
+
+      document.querySelectorAll('.media-placeholder img:not(.no-lightbox)').forEach(img => {
+        img.style.cursor = 'zoom-in';
+        img.addEventListener('click', function () {
+          openModal(`<img src="${this.src}" style="max-width:100%; max-height:92vh; border-radius:14px; border:2px solid var(--accent-blue);">`);
+        });
+      });
+
+      document.getElementById('video-trigger').addEventListener('click', function () {
+        openModal(`
+          <video controls autoplay style="max-width:100%; max-height:92vh; border-radius:14px;">
+            <source src="images/Demo.mp4" type="video/mp4">
+            Tu navegador no soporta video.
+          </video>
+        `);
+      });
+
+      closeBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+      document.addEventListener('keydown', e => { if (e.key === "Escape") closeModal(); });
+    })();
+
+    // Reveal animations
+    const revealElems = document.querySelectorAll('section');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.transform = 'translateY(0)';
+          e.target.style.opacity = '1';
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.05 });
+    revealElems.forEach(el => {
+      el.style.transition = 'all 800ms cubic-bezier(.2,.8,.2,1)';
+      el.style.transform = 'translateY(15px)';
+      el.style.opacity = '0';
+      io.observe(el);
+    });
+  </script>
+</body>
+
+</html>
