@@ -7,6 +7,14 @@
   <title>InventApp</title>
   <meta name="description"
     content="InventApp — Sistema integral de gestión de ventas, inventario y cuentas corrientes diseñado para tiendas de ropa." />
+  <!-- Security Headers -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'self'; font-src 'self';">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
   <link rel="icon" href="images/LogoTienda.png" type="image/png">
   <link rel="shortcut icon" href="images/LogoTienda.png" type="image/png">
   <style>
@@ -888,11 +896,11 @@
       </div>
       <p class="muted">¿Interesado en el sistema o necesita soporte técnico? - Contactanos para más información.</p>
       <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:16px">
-        <a class="btn">lurdciano@gmail.com</a>
-        <a class="btn outline" href="https://terracode.site/" target="_blank">Web de TerraCode</a>
+        <button class="btn" id="contact-email" data-user="lurdciano" data-domain="gmail.com">Mostrar Email</button>
+        <a class="btn outline" href="https://terracode.site/" target="_blank" rel="noopener noreferrer">Web de TerraCode</a>
       </div>
       <footer class="mt">
-        <div>© <strong>TerraCode</strong> <span class="muted">- 2026</span></div>
+        <div> <strong>TerraCode</strong> <span class="muted">- 2026</span></div>
         <div class="social muted">Solución de gestión inteligente para tiendas</div>
       </footer>
     </section>
@@ -964,6 +972,31 @@
       modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
       document.addEventListener('keydown', e => { if (e.key === "Escape") closeModal(); });
     })();
+
+    // Simple email reveal and copy
+    document.getElementById('contact-email').addEventListener('click', function() {
+      const user = this.dataset.user;
+      const domain = this.dataset.domain;
+      const email = user + '@' + domain;
+      
+      // Change button text to show email
+      this.textContent = email;
+      this.style.cursor = 'text';
+      this.style.userSelect = 'all';
+      
+      // Copy to clipboard
+      navigator.clipboard.writeText(email).then(() => {
+        // Show brief confirmation
+        const originalText = this.textContent;
+        this.textContent = '¡Email copiado!';
+        this.style.background = 'var(--accent-success)';
+        
+        setTimeout(() => {
+          this.textContent = email;
+          this.style.background = 'var(--accent-blue)';
+        }, 2000);
+      });
+    });
 
     // Reveal animations
     const revealElems = document.querySelectorAll('section');

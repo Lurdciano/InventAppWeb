@@ -1,0 +1,17 @@
+# Security Policy for InventApp
+# Contact for security issues
+Contact: mailto:lurdciano@gmail.com
+Expires: 2027-12-31T23:59:59.000Z
+Canonical: https://lurdciano.github.io/InventAppWeb/.well-known/security.txt
+
+# Security Policy
+Policy: https://terracode.site/security
+
+# Preferred Languages
+Preferred-Languages: es, en
+
+# Encryption
+Encryption: https://keybase.io/lurdciano/pgp_keys.asc
+
+# Acknowledgments
+Acknowledgments: https://terracode.site/security-acknowledgments

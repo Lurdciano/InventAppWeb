@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /*.json$
+Disallow: /*.xml$
+Disallow: /admin/
+Disallow: /private/
+Disallow: /.git/
+
+# Allow search engines to crawl the main site
+Sitemap: https://lurdciano.github.io/InventAppWeb/sitemap.xml
+
+# Block common bot paths
+Crawl-delay: 1
