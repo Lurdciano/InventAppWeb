@@ -1,0 +1,68 @@
+# ==========================================
+# InventAppWeb - .gitignore
+# Archivos y carpetas ignorados en el repositorio
+# ==========================================
+
+# --- Archivos del Sistema Operativo ---
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# --- Entornos y Editores de Desarrollo ---
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+*.bak
+*.tmp
+*.temp
+
+# --- Variables de Entorno, Credenciales y Secretos ---
+.env
+.env.*
+!.env.example
+*.env
+*.key
+*.pem
+*.cert
+*.crt
+*.pfx
+secrets/
+credentials.json
+
+# --- Logs y Depuración ---
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Dependencias y Empaquetado ---
+node_modules/
+bower_components/
+dist/
+build/
+.cache/
+
+# --- Bases de Datos Locales y Archivos Temporales ---
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# --- Entornos Virtuales y Python (Scripts complementarios) ---
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
