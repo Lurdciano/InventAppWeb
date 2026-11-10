@@ -190,7 +190,7 @@ Este proyecto se encuentra bajo los términos de la licencia **MIT**. Para más 
 * 💼 **LinkedIn:** [linkedin.com/in/luciano-ruizdiaz](https://www.linkedin.com/in/luciano-ruizdiaz)
 * 🐙 **GitHub:** [github.com/Lurdciano](https://github.com/Lurdciano)
 * 📧 **Email:** [lurdciano@gmail.com](mailto:lurdciano@gmail.com)
-* 🌐 **Organización:** [TerraCode](https://terracode.site/)
+* 🌐 **Organización:** [TerraCode](https://terracode.com.ar/)
 
 <div align="center">
   <sub>Desarrollado con dedicación por <b>Luciano Ruiz Diaz</b> · © 2026</sub>
